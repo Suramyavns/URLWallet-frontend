@@ -1,6 +1,6 @@
 # This is frontend of URL wallet 
 
-## This is a pretty simple app which allows you to shorten and save URLs for anytime use
+This is a pretty simple app which allows you to shorten and save URLs for anytime use
 
 ### Your .env should look like this
 ```
