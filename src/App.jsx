@@ -19,8 +19,8 @@ async function copyToClipboard(text) {
       document.body.appendChild(textarea);
       textarea.select();
       document.execCommand('copy'); // Still using execCommand for fallback
-      alert('Text copied to clipboard!');
       document.body.removeChild(textarea);
+      return true
     }
   } catch (err) {
     alert('Failed to copy! Please try again later');
@@ -34,10 +34,12 @@ export default function App(){
   const [scan,setScan] = useState(false)
   const [url,setUrl] = useState('')
   const [uuid,setUuid]=useState(null)
+  const [copied,setCopied]=useState(false)
   const [savedUrls,setUrls]=useState(JSON.parse(localStorage.getItem('ids'))??[])
   useEffect(()=>{
+    setCopied(false)
     localStorage.setItem('ids',JSON.stringify(savedUrls))
-  },[savedUrls])
+  },[savedUrls,uuid])
   const scannedUrl = (url) =>{
     setUrl(url);
     setScan(!scan)
@@ -95,7 +97,7 @@ export default function App(){
             className={btnStyle}
             type="button"
             onClick={()=>{
-              if(url.length>=30){
+              if(url.length<=30){
                 alert('URL is short enough')
               }
               else{
@@ -120,12 +122,21 @@ export default function App(){
             className={btnStyle}
             type="submit"
             onClick={()=>{
-              uuid?copyToClipboard(uuid):alert('Nothing to copy!')
+              uuid?(
+                copyToClipboard(uuid)?
+                (setCopied(true)):{}
+              ):alert('Nothing to copy!')
             }}>
-              Copy
-              <span className="hidden sm:block">
-                to clipboard
-              </span>
+              {
+                !copied?(
+                  <>
+                  Copy
+                  <span className="hidden sm:block">
+                    to clipboard
+                  </span>
+                  </>
+                ):<p>Copied!</p>
+              }
           </button>
           <button
             style={btnCss}
