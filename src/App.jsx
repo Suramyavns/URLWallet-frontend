@@ -62,7 +62,7 @@ export default function App(){
     className="h-screen w-screen flex-col gap-2 flex items-center">
       <Header />
       {/* form area */}
-      <div className="form h-1/5 sm:h-auto p-2 flex flex-col gap-2 w-11/12 justify-center items-center">
+      <div className="form h-fit sm:h-auto p-2 flex flex-col gap-2 w-11/12 justify-center items-center">
         <div className="w-full flex gap-3 justify-center items-center">
           <input
           style={{backgroundColor:"#2E294E",color:"#E8C1C5"}}
@@ -83,13 +83,13 @@ export default function App(){
         {scan && <Modal setURL={scannedUrl} isOpen={scan} setIsOpen={setScan} />}
         <div
         style={{color:"#D499B9"}}
-        className="w-11/12 py-4 text-center text-xs sm:text-lg font-bold items-center gap-1 flex justify-center">
+        className="w-11/12 py-2 text-center text-xs sm:text-lg font-bold items-center gap-1 flex justify-center">
           {
             loading===true?
               <span className="flex flex-col gap-2 w-full justify-center items-center">
                 <marquee className="text-xs w-full flex items-center justify-center">
                   <FontAwesomeIcon className="mx-1" icon={faInfoCircle} />
-                  Please wait while we process the URL, it may take around 50 seconds if the servers have not been pinged in a while
+                  Please wait while we process the URL, it may take around a minute if the servers have not been pinged in a while
                 </marquee>
                 <PacmanLoader color="#D499B9" size={20} />
               </span>
@@ -118,6 +118,7 @@ export default function App(){
             className={btnStyle}
             type="submit"
             onClick={()=>{
+              setLoading(false)
               setUrl('')
               setUuid(null)
             }}>
