@@ -7,7 +7,7 @@ const UrlList = ({urls,remove}) => {
     useEffect(()=>{},[urls])
   return (
     <div
-    className={`w-full h-3/5 mb-4 overflow-auto ${urls.length>0?'flex':'hidden'} flex-col justify-center items-center gap-2`}>
+    className={`w-full h-1/2 mb-4 overflow-auto ${urls.length>0?'flex':'hidden'} flex-col justify-start items-center gap-2`}>
         <h1
             className='text-2xl w-11/12 font-bold'
             style={{color:"#E8C1C5"}}>
@@ -23,7 +23,7 @@ const UrlList = ({urls,remove}) => {
                     style={{color:"#E8C1C5"}}
                     className='flex items-center justify-between p-1 hover:cursor-pointer text-white font-bold rounded-lg border-blue-800'
                     key={index}>
-                        <a className='w-full m-0'>{url}</a>
+                        <a className='w-full m-0' href={url}>{url}</a>
                         <button
                         onClick={()=>{remove(index)}}
                         className='mx-4 opacity-80 hover:opacity-100 bg-red-500 aspect-square w-10 rounded-lg border-2 border-red-800' type="button">

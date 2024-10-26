@@ -1,20 +1,31 @@
 import { useEffect, useState } from "react"
-import { add } from "./api"
+import { add, remove } from "./api"
 import UrlList from "./components/urlList"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLink } from "@fortawesome/free-solid-svg-icons";
 import { faQrcode } from "@fortawesome/free-solid-svg-icons/faQrcode";
 import Modal from "./components/modal";
+import { PacmanLoader } from "react-spinners";
+import Header from "./components/header";
 
-function copyToClipboard(text) {
-  navigator.clipboard.writeText(text)
-    .then(() => {
+async function copyToClipboard(text) {
+  try {
+    if (navigator.clipboard) {
+      await navigator.clipboard.writeText(text);
       alert('Text copied to clipboard!');
-    })
-    .catch((err) => {
-      alert('Failed to copy! Please try again later')
-      console.error('Failed to copy: ', err);
-    });
+    } else {
+      // Fallback for older browsers
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy'); // Still using execCommand for fallback
+      alert('Text copied to clipboard!');
+      document.body.removeChild(textarea);
+    }
+  } catch (err) {
+    alert('Failed to copy! Please try again later');
+    console.error('Failed to copy: ', err);
+  }
 }
 
 
@@ -32,11 +43,12 @@ export default function App(){
     setScan(!scan)
   }
   const removeUrl = (index) =>{
+    const url = savedUrls[index]
     const newUrls = savedUrls.filter((_, i) => i !== index); // Create a new array excluding the item at the given index
     setUrls(newUrls);
+    remove(url)
   }
   const storeUuid = (uuid)=>{
-    console.log(uuid)
     setUuid(uuid)
     setUrls(prev=>[...prev,uuid])
   }
@@ -46,12 +58,8 @@ export default function App(){
     <div
     style={{backgroundColor:'#011638'}}
     className="h-screen w-screen flex-col gap-2 flex items-center">
-      <p
-      style={{color:"#E8C1C5",fontSize:'4.5rem'}}
-      className="h-1/5 sm:h-1/3 flex gap-2 items-center justify-center font-bold">
-        <FontAwesomeIcon icon={faLink} />
-        Wallet
-      </p>
+      <Header />
+      {/* form area */}
       <div className="form h-1/5 sm:h-auto p-2 flex flex-col gap-2 w-11/12 justify-center items-center">
         <div className="w-full flex gap-3 justify-center items-center">
           <input
@@ -66,17 +74,17 @@ export default function App(){
           onClick={()=>{setScan(true)}}
           style={btnCss}
           title="Scan QR"
-          className={btnStyle}>
+          className={btnStyle+' border border-slate-400'}>
             <FontAwesomeIcon className="w-8 h-6 text-xl" icon={faQrcode} />
           </button>
         </div>
         {scan && <Modal setURL={scannedUrl} isOpen={scan} setIsOpen={setScan} />}
         <div
         style={{color:"#D499B9"}}
-        className="w-11/12 text-center text-xs sm:text-lg font-bold items-center gap-1 flex justify-center">
+        className="w-11/12 py-4 text-center text-xs sm:text-lg font-bold items-center gap-1 flex justify-center">
           {
             loading===true?
-              <p>Fetching your URL</p>
+              <PacmanLoader color="#D499B9" size={20} />
               :
               <a href={uuid}>{uuid}</a>
           }
@@ -87,10 +95,15 @@ export default function App(){
             className={btnStyle}
             type="button"
             onClick={()=>{
-              setLoading(true)
-              add(url,setUuid,setLoading)
+              if(url.length>=30){
+                alert('URL is short enough')
+              }
+              else{
+                setLoading(true)
+                add(url,setUuid,setLoading)
+              }
             }}>
-              Convert
+              Shorten
           </button>
           <button
             style={btnCss}
@@ -119,7 +132,15 @@ export default function App(){
             className={btnStyle}
             type="submit"
             onClick={()=>{
-              uuid?storeUuid(uuid):alert('Convert to save!')
+              if(url && url.length>0 && !uuid){
+                storeUuid(url)
+              }
+              else if(uuid.length>0){
+                storeUuid(uuid)
+              }
+              else{
+                alert('Nothing to save!')
+              }
             }}>
               Save
           </button>
