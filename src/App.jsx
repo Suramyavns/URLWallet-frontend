@@ -11,7 +11,6 @@ async function copyToClipboard(text) {
   try {
     if (navigator.clipboard) {
       await navigator.clipboard.writeText(text);
-      alert('Text copied to clipboard!');
     } else {
       // Fallback for older browsers
       const textarea = document.createElement('textarea');
