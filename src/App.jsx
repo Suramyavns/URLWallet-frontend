@@ -6,6 +6,7 @@ import { faQrcode } from "@fortawesome/free-solid-svg-icons/faQrcode";
 import Modal from "./components/modal";
 import { PacmanLoader } from "react-spinners";
 import Header from "./components/header";
+import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 
 async function copyToClipboard(text) {
   try {
@@ -85,7 +86,13 @@ export default function App(){
         className="w-11/12 py-4 text-center text-xs sm:text-lg font-bold items-center gap-1 flex justify-center">
           {
             loading===true?
-              <PacmanLoader color="#D499B9" size={20} />
+              <span className="flex flex-col gap-2 w-full justify-center items-center">
+                <marquee className="text-xs w-full flex items-center justify-center">
+                  <FontAwesomeIcon className="mx-1" icon={faInfoCircle} />
+                  Please wait while we process the URL, it may take around 50 seconds if the servers have not been pinged in a while
+                </marquee>
+                <PacmanLoader color="#D499B9" size={20} />
+              </span>
               :
               <a href={uuid}>{uuid}</a>
           }
