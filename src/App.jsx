@@ -19,6 +19,7 @@ function copyToClipboard(text) {
 
 
 export default function App(){
+  const [loading,setLoading] = useState(false)
   const [scan,setScan] = useState(false)
   const [url,setUrl] = useState('')
   const [uuid,setUuid]=useState(null)
@@ -73,14 +74,22 @@ export default function App(){
         <div
         style={{color:"#D499B9"}}
         className="w-11/12 text-center text-xs sm:text-lg font-bold items-center gap-1 flex justify-center">
-          <a href={uuid}>{uuid}</a>
+          {
+            loading===true?
+              <p>Fetching your URL</p>
+              :
+              <a href={uuid}>{uuid}</a>
+          }
         </div>
         <div className="btns w-11/12 flex gap-2 justify-center items-center">
           <button
             style={btnCss}
             className={btnStyle}
             type="button"
-            onClick={()=>add(url,setUuid)}>
+            onClick={()=>{
+              setLoading(true)
+              add(url,setUuid,setLoading)
+            }}>
               Convert
           </button>
           <button
