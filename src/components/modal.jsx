@@ -2,12 +2,14 @@ import { faQrcode } from "@fortawesome/free-solid-svg-icons/faQrcode";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Scanner } from "@yudiel/react-qr-scanner";
 import PropTypes from "prop-types";
+import { useState } from "react";
 
 
 const Modal = ({ isOpen, setIsOpen, setURL }) => {
   const toggleModal = ()=>{
     setIsOpen(!isOpen);
   }
+  const [allowed,setAllowed]=useState(true)
 
   return (
     <div className="flex justify-center items-center">
@@ -26,7 +28,19 @@ const Modal = ({ isOpen, setIsOpen, setURL }) => {
               <FontAwesomeIcon icon={faQrcode} />
               Scan to get URL
             </h2>
-            <Scanner onScan={(result)=>setURL(result.text)} onError={(err)=>alert(err)}/>
+            {
+              allowed?
+              <Scanner onScan={(result)=>{
+                setURL(result[0].rawValue)
+              }} onError={(err)=>{
+                setAllowed(false)
+                alert(err)
+              }}/>
+              :
+              <p className="text-red-500 font-semibold">
+                Allow camera permission to use this feature!
+              </p>
+            }
             <button
               style={{ backgroundColor: '#2E294E', color: "#D499B9" }}
               className="px-4 py-2 my-4 bg-red-500 text-white rounded hover:bg-red-600"

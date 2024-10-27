@@ -7,26 +7,7 @@ import Modal from "./components/modal";
 import { PacmanLoader } from "react-spinners";
 import Header from "./components/header";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
-
-async function copyToClipboard(text) {
-  try {
-    if (navigator.clipboard) {
-      await navigator.clipboard.writeText(text);
-    } else {
-      // Fallback for older browsers
-      const textarea = document.createElement('textarea');
-      textarea.value = text;
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand('copy'); // Still using execCommand for fallback
-      document.body.removeChild(textarea);
-      return true
-    }
-  } catch (err) {
-    alert('Failed to copy! Please try again later');
-    console.error('Failed to copy: ', err);
-  }
-}
+import { copyToClipboard } from "./utils";
 
 
 export default function App(){
@@ -35,10 +16,10 @@ export default function App(){
   const [url,setUrl] = useState('')
   const [uuid,setUuid]=useState(null)
   const [copied,setCopied]=useState(false)
-  const [savedUrls,setUrls]=useState(JSON.parse(localStorage.getItem('ids'))??[])
+  const [savedUrls,setUrls]=useState(JSON.parse(localStorage.getItem('urls'))??[])
   useEffect(()=>{
     setCopied(false)
-    localStorage.setItem('ids',JSON.stringify(savedUrls))
+    localStorage.setItem('urls',JSON.stringify(savedUrls))
   },[savedUrls,uuid])
   const scannedUrl = (url) =>{
     setUrl(url);
@@ -51,11 +32,10 @@ export default function App(){
     remove(url)
   }
   const storeUuid = (uuid)=>{
-    setUuid(uuid)
     setUrls(prev=>[...prev,uuid])
   }
   const btnCss = {backgroundColor:'#2E294E',color:"#D499B9"}
-  const btnStyle = 'p-2 flex gap-1 items-center bg-blue-600 rounded-lg text-white'
+  const btnStyle = 'p-2 text-sm sm:text-lg justify-center flex gap-1 items-center bg-blue-600 rounded-lg text-white'
   return(
     <div
     style={{backgroundColor:'#011638'}}
@@ -94,13 +74,13 @@ export default function App(){
                 <PacmanLoader color="#D499B9" size={20} />
               </span>
               :
-              <a href={uuid}>{uuid}</a>
+              <a className="w-full overflow-auto" href={uuid}>{uuid}</a>
           }
         </div>
-        <div className="btns w-11/12 flex gap-2 justify-center items-center">
+        <div className={`btns w-11/12 gap-2 flex items-center justify-center`}>
           <button
             style={btnCss}
-            className={btnStyle}
+            className={`p-2 text-sm sm:text-lg justify-center ${url.length<30?'hidden':'flex'} gap-1 items-center bg-blue-600 rounded-lg text-white`}
             type="button"
             onClick={()=>{
               if(url.length<=30){
@@ -136,12 +116,7 @@ export default function App(){
             }}>
               {
                 !copied?(
-                  <>
-                  Copy
-                  <span className="hidden sm:block">
-                    to clipboard
-                  </span>
-                  </>
+                  <p>Copy</p>
                 ):<p>Copied!</p>
               }
           </button>
@@ -149,19 +124,31 @@ export default function App(){
             style={btnCss}
             className={btnStyle}
             type="submit"
-            onClick={()=>{
-              if(url && url.length>0 && !uuid){
-                storeUuid(url)
-              }
-              else if(uuid.length>0){
-                storeUuid(uuid)
+            onClick={()=>{     
+              let title=prompt(`Give this url a title\n${uuid || url}`)
+              if(title){
+                if(url && url.length>0 && !uuid){
+                  storeUuid({
+                    "url":url,
+                    "title":title
+                  })
+                }
+                else if(uuid.length>0){
+                  storeUuid({
+                    "url":uuid,
+                    "title":title
+                  })
+                }
+                else{
+                  alert('Nothing to save!')
+                }
               }
               else{
-                alert('Nothing to save!')
+                alert('Provide a title to save!')
               }
             }}>
               Save
-          </button>
+          </button>         
         </div>
       </div>
       <UrlList remove={removeUrl} urls={savedUrls} />
