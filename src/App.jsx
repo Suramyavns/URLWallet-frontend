@@ -50,6 +50,10 @@ export default function App(){
       <Header />
       {/* form area */}
       <div className="form h-fit sm:h-auto p-2 flex flex-col gap-2 w-11/12 justify-center items-center">
+        <h3
+        style={{color:'#E8C1C5'}}
+        className="text-sm sm:text-xl py-3">Helps you scan,store and shorten any link
+        </h3>
         <div className="w-full flex gap-3 justify-center items-center">
           <input
           style={{backgroundColor:"#2E294E",color:"#E8C1C5"}}
