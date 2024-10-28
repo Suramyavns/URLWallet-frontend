@@ -9,6 +9,12 @@ import Header from "./components/header";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { copyToClipboard } from "./utils";
 
+function fixurl(url){
+  if(url.startsWith('https://') || url.startsWith('http://') ){
+    return url
+  }
+  return 'http://'+url;
+}
 
 export default function App(){
   const [loading,setLoading] = useState(false)
@@ -32,6 +38,7 @@ export default function App(){
     remove(url)
   }
   const storeUuid = (uuid)=>{
+    uuid.url = fixurl(uuid.url)
     setUrls(prev=>[...prev,uuid])
   }
   const btnCss = {backgroundColor:'#2E294E',color:"#D499B9"}
@@ -88,7 +95,7 @@ export default function App(){
               }
               else{
                 setLoading(true)
-                add(url,setUuid,setLoading)
+                add(fixurl(url),setUuid,setLoading)
               }
             }}>
               Shorten
